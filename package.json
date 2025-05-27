@@ -1,4 +1,5 @@
 {
+  "homepage": "https://FlyWithAoi.github.io/my-vibe-game",
   "name": "vite-project",
   "private": true,
   "version": "0.0.0",
@@ -6,9 +7,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "vite": "^6.3.5"
   }
 }
