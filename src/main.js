@@ -1,24 +1,44 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import * as THREE from 'three';
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+// 1. シーン／カメラ／レンダラーをセットアップ
+const scene    = new THREE.Scene();
+const camera   = new THREE.PerspectiveCamera(
+  75,                                // 画角
+  window.innerWidth / window.innerHeight, // アスペクト比
+  0.1,                               // ニアクリップ
+  1000                               // ファークリップ
+);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-setupCounter(document.querySelector('#counter'))
+// 2. ジオメトリとマテリアルでメッシュ（立方体）を作成
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+const materialFront = new THREE.MeshBasicMaterial({ color: 0x8e44ad });
+const materialOther = new THREE.MeshBasicMaterial({ color: 0x1abc9c });
+const materials = [
+  materialFront, materialOther,
+  materialOther, materialOther,
+  materialOther, materialOther
+];
+const cube = new THREE.Mesh(geometry, materials);
+scene.add(cube);
+
+// 3. カメラを少し後ろに下げる
+camera.position.z = 3;
+
+// 4. リサイズ対応
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// 5. アニメーションループ
+function animate() {
+  requestAnimationFrame(animate);
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
+  renderer.render(scene, camera);
+}
+animate();
